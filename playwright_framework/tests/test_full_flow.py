@@ -32,13 +32,7 @@ class TestUserFlow:
     def test_place_order(self, card_info):
         self.checkout_page.open_checkout_page()
         self.checkout_page.place_order()
-        self.checkout_page.enter_payment_details(
-            name_on_card=card_info["name_on_card"],
-            card_number=card_info["card_number"],
-            cvc=card_info["cvc"],
-            expiry_month=card_info["expiry_month"],
-            expiry_year=card_info["expiry_year"]
-        )
+        self.checkout_page.enter_payment_details(card_info)
         assert self.checkout_page.is_order_placed(), "O pedido não foi concluído."
 
     def test_logout(self):

@@ -1,33 +1,33 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Page, Locator
 
 
 class CartPage:
-    PRODUCTS_PAGE_LINK = 'a[href="/products"]'
-    CART_PAGE_LINK = 'a[href="/view_cart"]'
-    PROCEED_TO_CHECKOUT = 'a:has-text("Proceed To Checkout")'
-    MODAL_MESSAGE = 'h4.modal-title.w-100'
-    MODAL_CLOSE_BUTTON = 'button[data-dismiss="modal"]'
-    CHECKOUT_PAGE_HEADER = 'h2:has-text("Address Details")'
 
     def __init__(self, page: Page):
         self.page = page
+        self.products_page_link: Locator = page.locator('a[href="/products"]')
+        self.cart_page_link: Locator = page.locator('a[href="/view_cart"]')
+        self.proceed_to_checkout_button: Locator = page.locator('a:has-text("Proceed To Checkout")')
+        self.modal_message: Locator = page.locator('h4.modal-title.w-100')
+        self.modal_close_button: Locator = page.locator('button[data-dismiss="modal"]')
+        self.checkout_page_header: Locator = page.locator('h2:has-text("Address Details")')
 
     def add_product_to_cart(self, product_id):
         self.page.click(f'a[data-product-id="{product_id}"]')
 
     def open_products_page(self):
-        self.page.click(self.PRODUCTS_PAGE_LINK)
+        self.products_page_link.click()
 
     def go_to_cart(self):
-        self.page.click(self.CART_PAGE_LINK)
+        self.cart_page_link.nth(0).click()
 
     def proceed_to_checkout(self):
-        self.page.click(self.PROCEED_TO_CHECKOUT)
+        self.proceed_to_checkout_button.click()
 
-    def is_product_added(self):
-        modal_message = self.page.locator(self.MODAL_MESSAGE).text_content()
-        self.page.click(self.MODAL_CLOSE_BUTTON)
-        return modal_message == "Added!"
+    def is_product_added(self) -> bool:
+        modal_message = self.modal_message.text_content()
+        self.modal_close_button.click()
+        return modal_message.strip() == "Added!"
 
-    def is_checkout_page(self):
-        return self.page.locator(self.CHECKOUT_PAGE_HEADER).is_visible()
+    def is_checkout_page(self) -> bool:
+        return self.checkout_page_header.is_visible()

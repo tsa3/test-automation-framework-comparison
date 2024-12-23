@@ -1,33 +1,32 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Page, Locator
 
 class CheckoutPage:
-    CHECKOUT_LINK = "https://automationexercise.com/checkout"
-    PAYMENT_BTN_LINK = 'a[href="/payment"]'
-    CARD_NAME_INPUT = 'input[data-qa="name-on-card"]'
-    CARD_NUMBER_INPUT = 'input[data-qa="card-number"]'
-    CARD_CVC_INPUT = 'input[data-qa="cvc"]'
-    CARD_EXP_MONTH_INPUT = 'input[data-qa="expiry-month"]'
-    CARD_EXP_YEAR_INPUT = 'input[data-qa="expiry-year"]'
-    SUBMIT_BTN = "#submit"
-    ORDER_RESULT = 'h2[data-qa="order-placed"]'
-
     def __init__(self, page: Page):
         self.page = page
+        self.checkout_link = "https://automationexercise.com/checkout"
+        self.payment_btn: Locator = page.locator('a[href="/payment"]')
+        self.card_name_input: Locator = page.locator('input[data-qa="name-on-card"]')
+        self.card_number_input: Locator = page.locator('input[data-qa="card-number"]')
+        self.card_cvc_input: Locator = page.locator('input[data-qa="cvc"]')
+        self.card_exp_month_input: Locator = page.locator('input[data-qa="expiry-month"]')
+        self.card_exp_year_input: Locator = page.locator('input[data-qa="expiry-year"]')
+        self.submit_btn: Locator = page.locator("#submit")
+        self.order_result: Locator = page.locator('h2[data-qa="order-placed"]')
 
     def open_checkout_page(self):
-        self.page.goto(self.CHECKOUT_LINK)
+        self.page.goto(self.checkout_link)
 
     def place_order(self):
-        self.page.click(self.PAYMENT_BTN_LINK)
+        self.payment_btn.click()
 
-    def enter_payment_details(self, name_on_card, card_number, cvc, expiry_month, expiry_year):
-        self.page.fill(self.CARD_NAME_INPUT, name_on_card)
-        self.page.fill(self.CARD_NUMBER_INPUT, card_number)
-        self.page.fill(self.CARD_CVC_INPUT, cvc)
-        self.page.fill(self.CARD_EXP_MONTH_INPUT, expiry_month)
-        self.page.fill(self.CARD_EXP_YEAR_INPUT, expiry_year)
-        self.page.click(self.SUBMIT_BTN)
+    def enter_payment_details(self, payment_info: dict):
+        self.card_name_input.fill(payment_info.get("name_on_card", ""))
+        self.card_number_input.fill(payment_info.get("card_number", ""))
+        self.card_cvc_input.fill(payment_info.get("cvc", ""))
+        self.card_exp_month_input.fill(payment_info.get("expiry_month", ""))
+        self.card_exp_year_input.fill(payment_info.get("expiry_year", ""))
+        self.submit_btn.click()
 
     def is_order_placed(self):
-        self.page.locator(self.ORDER_RESULT).wait_for(state='visible')
-        return self.page.locator(self.ORDER_RESULT).text_content() == "Order Placed!"
+        self.order_result.wait_for(state='visible')
+        return self.order_result.text_content() == "Order Placed!"

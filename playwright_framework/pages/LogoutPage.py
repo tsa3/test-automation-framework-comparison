@@ -1,14 +1,13 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Page, Locator
 
 class LogoutPage:
-    LOGOUT_BTN = 'a[href="/logout"]'
-    LOGIN_FORM_INPUT = ".login-form"
-
     def __init__(self, page: Page):
         self.page = page
+        self.logout_button: Locator = page.locator('a[href="/logout"]')
+        self.login_form_input: Locator = page.locator(".login-form")
 
     def logout(self):
-        self.page.click(self.LOGOUT_BTN)
+        self.logout_button.click()
 
-    def is_logged_out(self):
-        return self.page.locator(self.LOGIN_FORM_INPUT).is_visible()
+    def is_logged_out(self) -> bool:
+        return self.login_form_input.is_visible()
