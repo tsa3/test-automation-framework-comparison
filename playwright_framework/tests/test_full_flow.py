@@ -1,4 +1,6 @@
 import pytest
+import json
+import os
 from playwright_framework.pages.CartPage import CartPage
 from playwright_framework.pages.CheckoutPage import CheckoutPage
 from playwright_framework.pages.LogoutPage import LogoutPage
@@ -6,31 +8,39 @@ from playwright_framework.pages.LogoutPage import LogoutPage
 
 @pytest.mark.usefixtures("exec_login")
 class TestUserFlow:
-    def test_add_product_to_cart(self, exec_login):
-        cart_page = CartPage(exec_login)
-        cart_page.add_product_to_cart(product_id="1")
-        assert cart_page.is_product_added(), "Produto não adicionado no carrinho"
+    @pytest.fixture(autouse=True)
+    def setup_pages(self, exec_login):
+        self.cart_page = CartPage(exec_login)
+        self.checkout_page = CheckoutPage(exec_login)
+        self.logout_page = LogoutPage(exec_login)
 
-    def test_proceed_to_checkout(self, exec_login):
-        cart_page = CartPage(exec_login)
-        cart_page.go_to_cart()
-        cart_page.proceed_to_checkout()
-        assert cart_page.is_checkout_page, "Página de checkout não foi exibida."
+    @pytest.fixture
+    def card_info(self):
+        with open("D:\camil\Documents\Conecta\Test-Automation-Framework-Comparison\playwright_framework\card_info.json") as f:
+            d = json.load(f)
+            return d
 
-    def test_place_order(self, exec_login):
-        checkout_page = CheckoutPage(exec_login)
-        checkout_page.open_checkout_page()
-        checkout_page.place_order()
-        checkout_page.enter_payment_details(
-            name_on_card="Nome Fantasia",
-            card_number="0123456789012345",
-            cvc="727",
-            expiry_month="11",
-            expiry_year="2034"
+    def test_add_product_to_cart(self):
+        self.cart_page.add_product_to_cart(product_id="1")
+        assert self.cart_page.is_product_added(), "Produto não adicionado no carrinho"
+
+    def test_proceed_to_checkout(self):
+        self.cart_page.go_to_cart()
+        self.cart_page.proceed_to_checkout()
+        assert self.cart_page.is_checkout_page, "Página de checkout não foi exibida."
+
+    def test_place_order(self, card_info):
+        self.checkout_page.open_checkout_page()
+        self.checkout_page.place_order()
+        self.checkout_page.enter_payment_details(
+            name_on_card=card_info["name_on_card"],
+            card_number=card_info["card_number"],
+            cvc=card_info["cvc"],
+            expiry_month=card_info["expiry_month"],
+            expiry_year=card_info["expiry_year"]
         )
-        assert checkout_page.is_order_placed(), "O pedido não foi concluído."
+        assert self.checkout_page.is_order_placed(), "O pedido não foi concluído."
 
-    def test_logout(self, exec_login):
-        logout_page = LogoutPage(exec_login)
-        logout_page.logout()
-        assert logout_page.is_logged_out(), "Logout não foi realizado corretamente."
+    def test_logout(self):
+        self.logout_page.logout()
+        assert self.logout_page.is_logged_out(), "Logout não foi realizado corretamente."
