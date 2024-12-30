@@ -3,7 +3,6 @@ from playwright.sync_api import Page, Locator
 class CheckoutPage:
     def __init__(self, page: Page):
         self.page = page
-        self.checkout_link = "https://automationexercise.com/checkout"
         self.payment_btn: Locator = page.locator('a[href="/payment"]')
         self.card_name_input: Locator = page.locator('input[data-qa="name-on-card"]')
         self.card_number_input: Locator = page.locator('input[data-qa="card-number"]')
@@ -12,9 +11,6 @@ class CheckoutPage:
         self.card_exp_year_input: Locator = page.locator('input[data-qa="expiry-year"]')
         self.submit_btn: Locator = page.locator("#submit")
         self.order_result: Locator = page.locator('h2[data-qa="order-placed"]')
-
-    def open_checkout_page(self):
-        self.page.goto(self.checkout_link)
 
     def place_order(self):
         self.payment_btn.click()

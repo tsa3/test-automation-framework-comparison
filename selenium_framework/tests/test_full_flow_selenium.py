@@ -1,13 +1,13 @@
 import pytest
 import json
 import os
-from playwright_framework.pages.CartPage import CartPage
-from playwright_framework.pages.CheckoutPage import CheckoutPage
-from playwright_framework.pages.LogoutPage import LogoutPage
+from selenium_framework.pages.CartPage import CartPage
+from selenium_framework.pages.CheckoutPage import CheckoutPage
+from selenium_framework.pages.LogoutPage import LogoutPage
 
 
 @pytest.mark.usefixtures("exec_login")
-class TestUserFlow:
+class TestSeleniumUserFlow:
     @pytest.fixture(autouse=True)
     def setup_pages(self, exec_login):
         self.cart_page = CartPage(exec_login)
@@ -16,7 +16,7 @@ class TestUserFlow:
 
     @pytest.fixture
     def card_info(self):
-        with open("D:\camil\Documents\Conecta\Test-Automation-Framework-Comparison\playwright_framework\card_info.json") as f:
+        with open("D:\camil\Documents\Conecta\Test-Automation-Framework-Comparison\selenium_framework\card_info.json") as f:
             d = json.load(f)
             return d
 
