@@ -1,0 +1,11 @@
+{
+    "name": "cypress_framework",
+    "version": "1.0.0",
+    "scripts": {
+        "test": "cypress open",
+        "test:headless": "cypress run"
+    },
+    "devDependencies": {
+        "cypress": "^12.17.4"
+    }
+}
