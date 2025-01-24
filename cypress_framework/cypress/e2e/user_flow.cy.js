@@ -6,10 +6,14 @@ describe('User Flow Tests', () => {
   const cartPage = new CartPage();
   const checkoutPage = new CheckoutPage();
   const logoutPage = new LogoutPage();
-  
+
   beforeEach(() => {
+    cy.session('userSession', () => {
+      cy.visit('https://automationexercise.com/');
+      cy.login('conectaautomation@email.com', 'senharuim', 'Automacao');
+    });
+
     cy.visit('https://automationexercise.com/');
-    cy.login('conectaautomation@email.com', 'senharuim', 'Automacao');
   });
 
   it('should add a product to the cart', () => {
